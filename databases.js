@@ -10,9 +10,13 @@ module.exports = {
     user: "sa",
     password: "123",
     database: "jedm",
-    options: {
-      encrypt: true,
-      trustServerCertificate: false,
-    },
+    // options: {
+    //   // encrypt: true,
+    //   trustServerCertificate: false,
+    // },
+  },
+  Mongodb: {
+    url: "mongodb://localhost:27017",
+    database: "jedm",
   },
 };

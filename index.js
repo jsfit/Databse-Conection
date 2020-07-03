@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 
 const mysql = require("mysql");
 const mssql = require("mssql");
+const MongoClient = require("mongodb").MongoClient;
 
 const configs = require("./databases");
 
@@ -33,16 +34,30 @@ app.post("/setup", async function (req, res) {
       if (connection) connection.connect();
 
       if (connection) connection.end();
+      res.send(JSON.stringify({ status: true, data: docs }));
+
       break;
 
     case "Mssql":
       connection = new mssql.ConnectionPool(configs[name]);
       let pool = await connection.connect();
       data = pool.query`select * from user`;
+      res.send(JSON.stringify({ status: true, data }));
+
+      break;
+
+    case "Mongodb":
+      MongoClient.connect(configs[name].url, function (err, client) {
+        console.log("Connected successfully to server");
+
+        const db = client.db(configs[name].database);
+        const collection = db.collection("users");
+        collection.find({}).toArray(function (err, docs) {
+          res.send(JSON.stringify({ status: true, data: docs }));
+        });
+      });
       break;
   }
-
-  res.send(JSON.stringify({ status: true, data }));
 });
 
 var server = app.listen(3900, function () {
