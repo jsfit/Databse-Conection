@@ -41,7 +41,7 @@
     <script>
       const selectDb = (event) => {
         console.log(event.target.value);
-        fetch("http://localhost:3900/setup", {
+        fetch("https://localhost:3900/setup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

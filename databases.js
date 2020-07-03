@@ -7,13 +7,15 @@ module.exports = {
   },
   Mssql: {
     server: "MYPC\\SQLEXPRESS01",
-    user: "sa",
-    password: "123",
+    user: "node",
+    password: "1qw2!QW@",
     database: "jedm",
-    // options: {
-    //   // encrypt: true,
-    //   trustServerCertificate: false,
-    // },
+    port: 1433,
+
+    options: {
+      encrypt: true,
+      trustServerCertificate: true,
+    },
   },
   Mongodb: {
     url: "mongodb://localhost:27017",
