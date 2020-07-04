@@ -20,5 +20,6 @@ module.exports = {
   Mongodb: {
     url: "mongodb://localhost:27017",
     database: "jedm",
+    useUnifiedTopology: true,
   },
 };

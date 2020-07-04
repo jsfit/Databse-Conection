@@ -5,6 +5,8 @@
     "express": "^4.17.1",
     "mongodb": "^3.5.9",
     "mssql": "7.0.0-alpha.3",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-gyp": "^7.0.0",
+    "oracledb": "github:oracle/node-oracledb#v5.0.0"
   }
 }
