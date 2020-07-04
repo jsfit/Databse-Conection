@@ -60,11 +60,7 @@ app.post("/setup", async function (req, res) {
       if (connection) {
         console.log("Connected successfully to MySQL server");
         connection.connect();
-        connection.query("SELECT * FROM user", function (
-          err,
-          result,
-          fields
-        ) {
+        connection.query("SELECT * FROM teachers", function (err, result, fields) {
           if (err) throw err;
           console.log(result);
           res.send(JSON.stringify({ status: true, data: result }));
@@ -80,7 +76,7 @@ app.post("/setup", async function (req, res) {
         .then((pool) => {
           console.log("Connected successfully to MSSQL server");
 
-          return pool.query`select * from [user]`;
+          return pool.query`select * from [books]`;
         })
         .then((result) => {
           res.send(JSON.stringify({ status: true, data: result.recordset }));
