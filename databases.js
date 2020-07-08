@@ -6,14 +6,24 @@ module.exports = {
     database: "jedm",
   },
   Mssql: {
+    server: "107.180.90.24",
+    user: "northwindDBAdminDev",
+    password: "p1sswOrdDev",
+    database: "NorthwindDev",
+    port: 1433,
+
+    options: {
+      trustServerCertificate: true,
+    },
+  },
+  MssqlW: {
     server: "MYPC\\SQLEXPRESS01",
-    user: "node",
-    password: "1qw2!QW@",
+    driver: "msnodesqlv8",
     database: "jedm",
     port: 1433,
 
     options: {
-      encrypt: true,
+      trustedConnection: true,
       trustServerCertificate: true,
     },
   },
