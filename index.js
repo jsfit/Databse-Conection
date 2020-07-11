@@ -50,7 +50,6 @@ app.post("/setup", async function (req, res) {
   switch (name) {
     case "Oracle":
       connection = await oracledb.getConnection(_config);
-      console.log(connection);
       const result = await connection.execute(
         queries[name][0].replace(/%schema%/g, _schema)
       );
@@ -59,7 +58,7 @@ app.post("/setup", async function (req, res) {
       );
       res.send(
         JSON.stringify({
-          status: false,
+          status: true,
           data: [...result.rows, ...result2.rows],
         })
       );
@@ -135,10 +134,15 @@ const configMaker = (config) => {
   switch (name) {
     case "Oracle":
       c = {
-        name: userName,
+        user: userName,
         password,
         connectString: `${host}/${database}`,
-        privilege: role,
+        privilege:
+          role === "SYSDBA"
+            ? oracledb.SYSDBA
+            : role === "SYSOPER"
+            ? oracledb.SYSOPER
+            : 0,
       };
       break;
     case "Mysql":
@@ -155,7 +159,7 @@ const configMaker = (config) => {
     case "Mssql":
       c = {
         server: host,
-        ...(!!user && { user: userName }),
+        ...(!!userName && { user: userName }),
         ...(!!password && { password }),
         ...(!!database && { database }),
         ...(authentication === "Windows Authentication" && {
