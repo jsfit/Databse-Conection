@@ -1,9 +1,9 @@
 module.exports = {
   Mysql: {
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "jedm",
+    host: "107.180.90.24",
+    user: "WahidTechAdmin",
+    password: "WTdb@1649",
+    database: "sakila",
   },
   Mssql: {
     server: "107.180.90.24",
@@ -11,7 +11,9 @@ module.exports = {
     password: "p1sswOrdDev",
     database: "NorthwindDev",
     port: 1433,
-
+    pool: {
+      idleTimeoutMillis: 6000000,
+    },
     options: {
       trustServerCertificate: true,
     },

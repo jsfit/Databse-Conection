@@ -6,7 +6,7 @@
     "mongodb": "^3.5.9",
     "msnodesqlv8": "^1.1.7",
     "mssql": "7.0.0-alpha.3",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.1.0",
     "node-gyp": "^7.0.0",
     "oracledb": "github:oracle/node-oracledb#v5.0.0"
   }

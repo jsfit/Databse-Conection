@@ -22,15 +22,15 @@ FROM information_schema.TABLES t
     tc.constraint_type
 FROM information_schema.TABLE_CONSTRAINTS tc
     JOIN information_schema.KEY_COLUMN_USAGE cu ON tc.table_schema = cu.table_schema
-        and tc.table_name = cu.table_name
-        and tc.constraint_name = cu.constraint_name
-        and tc.constraint_type = 'PRIMARY KEY'
+        AND tc.table_name = cu.table_name
+        AND tc.constraint_name = cu.constraint_name
+        AND tc.constraint_type = 'PRIMARY KEY'
     )
 pk ON pk.table_schema = c.table_schema
     AND pk.table_name = c.table_name
     AND pk.column_name = c.column_name
+WHERE t.TABLE_SCHEMA = 'sakila'
 ORDER BY t.TABLE_NAME;
-WHERE t.TABLE_SCHEMA = 'sakila';
 
 SELECT a.ROUTINE_TYPE AS TABLE_TYPE,
     a.SPECIFIC_NAME AS TABLE_NAME,
@@ -42,5 +42,6 @@ FROM INFORMATION_SCHEMA.ROUTINES a
     INNER JOIN INFORMATION_SCHEMA.PARAMETERS b ON a.SPECIFIC_NAME = b.SPECIFIC_NAME
 WHERE a.SPECIFIC_NAME NOT LIKE 'sp_%'
     AND a.SPECIFIC_NAME NOT LIKE 'fn_%'
+    AND a.ROUTINE_SCHEMA = 'sakila'
 ORDER BY a.ROUTINE_TYPE,
     a.ROUTINE_NAME

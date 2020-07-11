@@ -67,7 +67,8 @@
             Accept: "q=0.8;application/json;q=0.9",
           },
           body: JSON.stringify({
-            name: event.target.value === "Mssql Windows Auth" ? "MssqlW" : event.target.value
+            name: event.target.value === "Mssql Windows Auth" ? "MssqlW" : event.target.value,
+            schema: "sakila"
           }),
         })
         .then((response) => response.json())
