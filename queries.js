@@ -1,6 +1,6 @@
 module.exports = {
-
-    Oracle:`SELECT *
+  Oracle: [
+    `SELECT *
     FROM
         (
             SELECT
@@ -79,10 +79,8 @@ module.exports = {
                     and tcom.column_name = col.column_name
             where col.owner = UPPER('%schema%')
     ) col
-    ORDER BY table_name;
-    
-    
-    SELECT
+    ORDER BY table_name`,
+    `SELECT
         dep.TYPE AS "TABLE_TYPE"
     , aa.OBJECT_NAME  AS "TABLE_NAME"
     , aa.ARGUMENT_NAME AS "COLUMN_NAME"
@@ -95,8 +93,9 @@ module.exports = {
         ON aa.OBJECT_NAME = dep.name
     WHERE aa.owner = UPPER('%schema%') AND dep.REFERENCED_OWNER = UPPER('%schema%')
     `,
+  ],
 
-    Mysql:`SELECT t.TABLE_TYPE,
+  Mysql: `SELECT t.TABLE_TYPE,
     t.TABLE_NAME,
     c.COLUMN_NAME,
     c.IS_NULLABLE,
@@ -144,9 +143,7 @@ WHERE a.SPECIFIC_NAME NOT LIKE 'sp_%'
 ORDER BY a.ROUTINE_TYPE,
     a.ROUTINE_NAME`,
 
-
-
-    Mssql: `SELECT t.TABLE_TYPE,
+  Mssql: `SELECT t.TABLE_TYPE,
     t.TABLE_NAME,
     c.COLUMN_NAME,
     c.IS_NULLABLE,
@@ -183,6 +180,5 @@ FROM [%schema%].INFORMATION_SCHEMA.TABLES t
         AND prop.name = 'MS_Description'
 ORDER BY t.TABLE_NAME;
 `,
-    Mongodb: ``,
-  };
-  
+  Mongodb: ``,
+};

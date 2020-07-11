@@ -57,15 +57,26 @@ app.post("/setup", async function (req, res) {
       });
       console.log(connection);
       const result = await connection.execute(
-        queries[name].replace("%schema%", schema)
+        queries[name][0].replace(/%schema%/g, schema)
+      );
+      const result2 = await connection.execute(
+        queries[name][1].replace(/%schema%/g, schema)
       );
       console.log(result.rows);
-      res.send(JSON.stringify({ status: false, data: result.rows }));
+      res.send(
+        JSON.stringify({
+          status: false,
+          data: [...result.rows, ...result2.rows],
+        })
+      );
 
       break;
 
     case "Mysql":
-      connection = mysql.createConnection({...configs[name],multipleStatements: true});
+      connection = mysql.createConnection({
+        ...configs[name],
+        multipleStatements: true,
+      });
       if (connection) {
         console.log("Connected successfully to MySQL server");
         connection.connect();
@@ -75,7 +86,9 @@ app.post("/setup", async function (req, res) {
           fields
         ) {
           if (err) throw err;
-          res.send(JSON.stringify({ status: true, data: result }));
+          res.send(
+            JSON.stringify({ status: true, data: [...result[0], ...result[1]] })
+          );
         });
         connection.end();
       }
