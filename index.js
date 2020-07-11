@@ -44,25 +44,19 @@ app.get("/", function (req, res) {
 });
 
 app.post("/setup", async function (req, res) {
-  console.log(req.body);
-  let { name, schema } = req.body;
-  lastConfig = name;
+  let { name, database, schema } = req.body;
+  let _schema = schema || database;
+  let _config = configMaker(req.body);
   switch (name) {
     case "Oracle":
-      connection = await oracledb.getConnection({
-        user: "sys",
-        password: "ppp",
-        connectString: "localhost/ppp",
-        privilege: oracledb.SYSDBA,
-      });
+      connection = await oracledb.getConnection(_config);
       console.log(connection);
       const result = await connection.execute(
-        queries[name][0].replace(/%schema%/g, schema)
+        queries[name][0].replace(/%schema%/g, _schema)
       );
       const result2 = await connection.execute(
-        queries[name][1].replace(/%schema%/g, schema)
+        queries[name][1].replace(/%schema%/g, _schema)
       );
-      console.log(result.rows);
       res.send(
         JSON.stringify({
           status: false,
@@ -73,14 +67,11 @@ app.post("/setup", async function (req, res) {
       break;
 
     case "Mysql":
-      connection = mysql.createConnection({
-        ...configs[name],
-        multipleStatements: true,
-      });
+      connection = mysql.createConnection(_config);
       if (connection) {
         console.log("Connected successfully to MySQL server");
         connection.connect();
-        connection.query(queries[name].replace(/%schema%/g, schema), function (
+        connection.query(queries[name].replace(/%schema%/g, _schema), function (
           err,
           result,
           fields
@@ -96,14 +87,13 @@ app.post("/setup", async function (req, res) {
       break;
 
     case "Mssql":
-      console.log(queries[name].replace(/%schema%/g, schema));
       try {
-        await new mssql.ConnectionPool(configs[name])
+        await new mssql.ConnectionPool(_config)
           .connect()
           .then((pool) => {
             console.log("Connected successfully to MSSQL server");
 
-            return pool.query(queries[name].replace(/%schema%/g, schema));
+            return pool.query(queries[name].replace(/%schema%/g, _schema));
           })
           .then((result) => {
             res.send(JSON.stringify({ status: true, data: result.recordset }));
@@ -116,23 +106,6 @@ app.post("/setup", async function (req, res) {
       }
 
       break;
-
-    // case "MssqlW":
-    //   await new mssql.ConnectionPool(configs[name])
-    //     .connect()
-    //     .then((pool) => {
-    //       console.log("Connected successfully to MSSQL server");
-
-    //       return pool.query`select * from [books]`;
-    //     })
-    //     .then((result) => {
-    //       res.send(JSON.stringify({ status: true, data: result.recordset }));
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-
-    //   break;
 
     case "Mongodb":
       MongoClient.connect(configs[name].url, function (err, client) {
@@ -148,6 +121,61 @@ app.post("/setup", async function (req, res) {
   }
 });
 
+const configMaker = (config) => {
+  let {
+    name,
+    database,
+    role,
+    authentication,
+    host,
+    userName,
+    password,
+  } = config;
+  let c = {};
+  switch (name) {
+    case "Oracle":
+      c = {
+        name: userName,
+        password,
+        connectString: `${host}/${database}`,
+        privilege: role,
+      };
+      break;
+    case "Mysql":
+      c = {
+        user: userName,
+        host,
+        password,
+        database,
+        multipleStatements: true,
+      };
+      break;
+    case "Mongodb":
+      break;
+    case "Mssql":
+      c = {
+        server: host,
+        ...(!!user && { user: userName }),
+        ...(!!password && { password }),
+        ...(!!database && { database }),
+        ...(authentication === "Windows Authentication" && {
+          driver: "msnodesqlv8",
+        }),
+        port: 1433,
+        pool: {
+          idleTimeoutMillis: 6000000,
+        },
+        options: {
+          ...(authentication === "Windows Authentication" && {
+            trustedConnection: true,
+          }),
+          trustServerCertificate: true,
+        },
+      };
+      break;
+  }
+  return c;
+};
 var server = https.createServer(options, app).listen(3900, function () {
   var host = server.address().address;
   var port = server.address().port;
